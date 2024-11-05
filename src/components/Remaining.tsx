@@ -1,21 +1,23 @@
-import { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 
-const Remaining = () => {
-  const { expenses } = useContext(AppContext);
-  let budget = 1000;
+const Remaining: React.FC = () => {
+  const { budget, expenses } = useContext(AppContext);
 
-  const totalExpenses = expenses.reduce((total, item) => {
-    return (total = total + item.cost);
-  }, 0);
+  const totalExpenses = expenses.reduce((total, expense) => total + expense.cost, 0);
+  const remainingBalance = budget - totalExpenses;
 
-  const alertType = totalExpenses > budget ? "alert-danger" : "alert-success";
-
-  // Exercise: Create an alert when Remaining is less than 0.
+  useEffect(() => {
+    if (remainingBalance < 0) {
+      alert("Alert: You have exceeded your budget!");
+    }
+  }, [remainingBalance]);
 
   return (
-    <div className={`alert ${alertType}`}>
-      <span>Remaining: ${budget - totalExpenses}</span>
+    <div
+      className={`alert ${remainingBalance < 0 ? "alert-danger" : "alert-success"}`}
+    >
+      Remaining: ${remainingBalance.toFixed(2)}
     </div>
   );
 };
